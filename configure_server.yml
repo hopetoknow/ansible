@@ -1,0 +1,69 @@
+- name: Create and configure user
+  hosts: webservers
+  become: yes
+  tags:
+    - user
+  tasks:  
+    - name: Create user
+      ansible.builtin.user:
+        name: bob
+        groups: sudo
+        state: present
+
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: "/home/bob/.ssh"
+        state: directory
+        owner: bob
+        group: bob
+        mode: '0700'
+
+    - name: Add SSH key to authorized_keys
+      ansible.posix.authorized_key:
+        user: bob
+        state: present
+        key: "{{ lookup('file', '/home/bob/.ssh/id_rsa.pub') }}"
+    
+    - name: Allow root and user to SSH into server
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: 'AllowUsers root bob'
+
+    - name: Restart SSH service
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
+
+- name: Install soft
+  hosts: webservers
+  become: yes
+  tags:
+    - soft
+  tasks:
+    - name: Update package cache      
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Git
+      ansible.builtin.apt:
+        name: git
+        state: present
+      tags: git
+
+    - name: Install Make 
+      ansible.builtin.apt:
+        name: make
+        state: present
+      tags: make
+
+    - name: Install Java
+      ansible.builtin.apt:
+        name: openjdk-19-jdk
+        state: present
+      tags: java
+
+    - name: Install Maven
+      ansible.builtin.apt:
+        name: maven
+        state: present
+      tags: maven

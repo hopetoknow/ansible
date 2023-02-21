@@ -1,0 +1,27 @@
+- name: Remove soft
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Remove Git
+      ansible.builtin.apt:
+        name: git
+        state: absent
+      tags: git
+
+    - name: Remove Make
+      ansible.builtin.apt:
+        name: make
+        state: absent
+      tags: make
+
+    - name: Remove Java
+      ansible.builtin.apt:
+        name: openjdk-19-jdk
+        state: absent
+      tags: java
+
+    - name: Remove Maven
+      ansible.builtin.apt:
+        name: maven
+        state: absent
+      tags: maven
