@@ -1,6 +1,9 @@
 - name: Install and configure nginx
   hosts: webservers
   become: yes
+  vars:
+    nginx_port: 8080
+    root_dir: files
   tasks:
     - name: Update package cache
       ansible.builtin.apt:
@@ -13,12 +16,12 @@
 
     - name: Copy index.html
       ansible.builtin.copy:
-        src: files/index.html
+        src: "{{root_dir}}/index.html"
         dest: /usr/share/nginx/html/index.html
 
     - name: Copy configuration file
-      ansible.builtin.copy:
-        src: files/nginx.conf
+      ansible.builtin.template:
+        src: "{{root_dir}}/nginx.conf.j2"
         dest: /etc/nginx/nginx.conf
       notify: Restart nginx
 
