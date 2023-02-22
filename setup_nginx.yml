@@ -12,12 +12,12 @@
         state: latest
 
     - name: Copy index.html
-      copy:
+      ansible.builtin.copy:
         src: files/index.html
         dest: /usr/share/nginx/html/index.html
 
     - name: Copy configuration file
-      copy:
+      ansible.builtin.copy:
         src: files/nginx.conf
         dest: /etc/nginx/nginx.conf
       notify: Restart nginx
