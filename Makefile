@@ -12,4 +12,6 @@ soft-remove:
 
 user-create:
 	ansible-playbook configure_server.yml -i inventory.ini -t user
-	
+
+nginx-setup:
+	ansible-playbook setup_nginx.yml -i inventory.ini
