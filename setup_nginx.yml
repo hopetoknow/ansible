@@ -1,4 +1,4 @@
-- name: Install and configure nginx
+- name: Install and configure nginx, install cowsay
   hosts: webservers
   become: yes
   vars:
@@ -8,6 +8,15 @@
     - name: Update package cache
       ansible.builtin.apt:
         update_cache: yes
+
+    - name: Install cowsay
+      ansible.builtin.apt:
+        name: cowsay
+        state: latest
+
+    - name: Make the cow say hostname
+      ansible.builtin.command: cowsay "I am server {{ ansible_hostname }}"
+      register: cowsay_output
 
     - name: Install nginx
       ansible.builtin.apt:
