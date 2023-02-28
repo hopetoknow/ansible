@@ -1,38 +1,51 @@
-- name: Create and configure user
+- name: Create and configure users
   hosts: webservers
   become: yes
+  vars:
+    users: [bob, joe, sam, hopetoknow]
   tags:
     - user
   tasks:  
     - name: Create user
       ansible.builtin.user:
-        name: bob
+        name: "{{ item }}"
         groups: sudo
         state: present
+      loop: "{{ users }}"
 
     - name: Create .ssh directory
       ansible.builtin.file:
-        path: "/home/bob/.ssh"
+        path: "/home/{{ item }}/.ssh"
         state: directory
-        owner: bob
-        group: bob
+        owner: "{{ item }}"
+        group: "{{ item }}"
         mode: '0700'
+      loop: "{{ users }}"
 
     - name: Add SSH key to authorized_keys
       ansible.posix.authorized_key:
-        user: bob
+        user: "{{ item }}"
         state: present
-        key: "{{ lookup('file', '/home/bob/.ssh/id_rsa.pub') }}"
+        key: "{{ lookup('file', '/home/hopetoknow/.ssh/id_rsa.pub') }}"
+      loop: "{{ users }}"
     
     - name: Allow root and user to SSH into server
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
-        line: 'AllowUsers root bob'
+        line: 'AllowUsers root {{ users | join(" ") }}'
 
     - name: Restart SSH service
       ansible.builtin.service:
         name: ssh
         state: restarted
+    
+    - name: Copy git configuration file
+      ansible.builtin.template:
+        src: "{{ root_dir }}/.gitconfig.j2"
+        dest: "/home/{{ item }}/.gitconfig"
+      loop: "{{ users }}"
+      vars: 
+        user_name: "{{ item }}"
 
 - name: Install soft
   hosts: webservers
