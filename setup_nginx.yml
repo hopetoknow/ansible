@@ -3,7 +3,7 @@
   become: yes
   vars:
     nginx_port: 8080
-    root_dir: files
+    server_presentation: "This is server {{ ansible_hostname }}!"
   tasks:
     - name: Update package cache
       ansible.builtin.apt:
