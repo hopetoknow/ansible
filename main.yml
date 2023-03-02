@@ -1,0 +1,2 @@
+- ansible.builtin.import_playbook: configure_server.yml
+- ansible.builtin.import_playbook: setup_nginx.yml
