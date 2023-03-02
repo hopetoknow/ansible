@@ -1,17 +1,14 @@
 ping:
 	ansible webservers -i inventory.ini -m ping
 
-server-configure:
-	ansible-playbook configure_server.yml -i inventory.ini
+main:
+	ansible-playbook main.yml -i inventory.ini
 
-soft-install:
-	ansible-playbook configure_server.yml -i inventory.ini -t soft
+user:
+	ansible-playbook user_setup.yml -i inventory.ini
 
-soft-remove:
-	ansible-playbook remove-soft.yml -i inventory.ini
+software:
+	ansible-playbook software_install.yml -i inventory.ini
 
-user-create:
-	ansible-playbook configure_server.yml -i inventory.ini -t user
-
-nginx-setup:
-	ansible-playbook setup_nginx.yml -i inventory.ini
+nginx:
+	ansible-playbook nginx_setup.yml -i inventory.ini

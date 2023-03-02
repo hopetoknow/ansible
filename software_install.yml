@@ -1,0 +1,33 @@
+- name: Install soft
+  hosts: webservers
+  become: yes
+  tags:
+    - soft
+  tasks:
+    - name: Update package cache      
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Git
+      ansible.builtin.apt:
+        name: git
+        state: present
+      tags: git
+
+    - name: Install Make 
+      ansible.builtin.apt:
+        name: make
+        state: present
+      tags: make
+
+    - name: Install Java
+      ansible.builtin.apt:
+        name: openjdk-19-jdk
+        state: present
+      tags: java
+
+    - name: Install Maven
+      ansible.builtin.apt:
+        name: maven
+        state: present
+      tags: maven
