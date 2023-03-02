@@ -3,8 +3,6 @@
   become: yes
   vars:
     users: [bob, joe, sam, hopetoknow]
-  tags:
-    - user
   tasks:  
     - name: Create user
       ansible.builtin.user:
