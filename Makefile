@@ -5,10 +5,10 @@ main:
 	ansible-playbook main.yml -i inventory.ini
 
 user:
-	ansible-playbook user_setup.yml -i inventory.ini
+	ansible-playbook playbooks/user_setup.yml -i inventory.ini
 
 software:
-	ansible-playbook software_install.yml -i inventory.ini
+	ansible-playbook playbooks/software_install.yml -i inventory.ini
 
 nginx:
-	ansible-playbook nginx_setup.yml -i inventory.ini
+	ansible-playbook playbooks/nginx_setup.yml -i inventory.ini
