@@ -11,8 +11,8 @@
 
     - name: Install cowsay
       ansible.builtin.apt:
-        name: cowsay
-        state: latest
+        name: cowsay=3.03+dfsg2-8
+        state: present
 
     - name: Make the cow say hostname
       ansible.builtin.command: cowsay "I am server {{ ansible_hostname }}"
@@ -20,8 +20,8 @@
 
     - name: Install nginx
       ansible.builtin.apt:
-        name: nginx
-        state: latest
+        name: nginx=1.22.0-1ubuntu1.1
+        state: present
 
     - name: Copy index.html
       ansible.builtin.template:
@@ -32,10 +32,10 @@
       ansible.builtin.template:
         src: "{{ root_dir }}/nginx.conf.j2"
         dest: /etc/nginx/nginx.conf
-      notify: Restart nginx
+      notify: Reload nginx
 
   handlers:
-    - name: Restart nginx
+    - name: Reload nginx
       ansible.builtin.service:
         name: nginx
         state: reloaded
