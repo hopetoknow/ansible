@@ -4,62 +4,47 @@
   vars:
     nginx_port: 8080
     server_presentation: "This is server {{ ansible_hostname }}!"
+    packages: [nginx=1.22.0-1ubuntu1.1, ufw=0.36.1-4build1, cowsay=3.03+dfsg2-8]
+    ports: [22, 443, 8080]
   tasks:
-    - name: Update package cache
+    - name: Install nginx, UFW and cowsay packages
       ansible.builtin.apt:
-        update_cache: yes
-
-    - name: Install cowsay
-      ansible.builtin.apt:
-        name: cowsay=3.03+dfsg2-8
+        name: "{{ item }}"
         state: present
+        update_cache: yes
+      loop: "{{ packages }}"
 
     - name: Make the cow say hostname
       ansible.builtin.command: cowsay "I am server {{ ansible_hostname }}"
       register: cowsay_output
 
-    - name: Install nginx
-      ansible.builtin.apt:
-        name: nginx=1.22.0-1ubuntu1.1
-        state: present
+    - name: Make sure a service unit is running
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: yes
 
-    - name: Install UFW package
-      ansible.builtin.apt:
-        name: ufw=0.36.1-4build1
-        state: present
-
-    - name: Allow HTTP traffic
+    - name: Allow traffic
       community.general.ufw:
         rule: allow
-        port: 80
+        port: "{{ item }}"
         proto: tcp
-
-    - name: Allow HTTPS traffic
-      community.general.ufw:
-        rule: allow
-        port: 443
-        proto: tcp
-
-    - name: Allow SSH traffic 
-      community.general.ufw:
-        rule: allow
-        port: 22
-        proto: tcp
+      loop: "{{ ports }}"
 
     - name: Enable UFW
       community.general.ufw:
         state: enabled
-
-    - name: Copy index.html
-      ansible.builtin.template:
-        src: /index.html.j2
-        dest: /usr/share/nginx/html/index.html
 
     - name: Copy nginx configuration file
       ansible.builtin.template:
         src: /nginx.conf.j2
         dest: /etc/nginx/nginx.conf
       notify: Reload nginx
+
+    - name: Copy index.html
+      ansible.builtin.template:
+        src: /index.html.j2
+        dest: /usr/share/nginx/html/index.html
 
   handlers:
     - name: Reload nginx
