@@ -52,12 +52,12 @@
 
     - name: Copy index.html
       ansible.builtin.template:
-        src: "{{ root_dir }}/index.html.j2"
+        src: /index.html.j2
         dest: /usr/share/nginx/html/index.html
 
     - name: Copy nginx configuration file
       ansible.builtin.template:
-        src: "{{ root_dir }}/nginx.conf.j2"
+        src: /nginx.conf.j2
         dest: /etc/nginx/nginx.conf
       notify: Reload nginx
 
