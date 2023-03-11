@@ -24,7 +24,7 @@
       ansible.posix.authorized_key:
         user: "{{ item }}"
         state: present
-        key: "{{ lookup('file', '/home/hopetoknow/.ssh/id_rsa.pub') }}"
+        key: "{{ lookup('file', '/home/mrgreen/.ssh/id_rsa.pub') }}"
       loop: "{{ users }}"
     
     - name: Allow root and user to SSH into server
@@ -42,6 +42,4 @@
         src: .gitconfig.j2
         dest: "/home/{{ item }}/.gitconfig"
       loop: "{{ users }}"
-      vars: 
-        user_name: "{{ item }}"
         
