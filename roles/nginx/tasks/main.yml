@@ -1,0 +1,55 @@
+- name: Install nginx, UFW and cowsay packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ packages }}"
+
+- name: Make the cow say hostname
+  ansible.builtin.command: cowsay "I am server {{ ansible_hostname }}"
+  register: cowsay_output
+
+- name: Make sure a service unit is running
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Allow traffic
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ ufw_ports }}"
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
+
+- name: Copy nginx configuration file
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: Reload nginx
+
+- name: Copy html files
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index{{ item }}.html
+  loop: "{{ nginx_ports }}"
+
+- name: Copy virtual hosts configuration files
+  ansible.builtin.template:
+    src: host.conf.j2
+    dest: /etc/nginx/sites-available/host{{ item }}.conf
+  loop: "{{ nginx_ports }}"
+  notify: Reload nginx
+
+- name: Activate virtual hosts configuration
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/host{{ item }}.conf"
+    dest: "/etc/nginx/sites-enabled/host{{ item }}.conf"
+    state: link
+  loop: "{{ nginx_ports }}" 
+  notify: Reload nginx
+  

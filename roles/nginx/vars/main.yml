@@ -1,0 +1,6 @@
+packages: [nginx=1.22.0-1ubuntu1.1, ufw=0.36.1-4build1, cowsay=3.03+dfsg2-8]
+ufw_ports: [22, 80, 443, 8080]
+nginx_ports: [80, 8080]
+connection_number: 768
+log_dir: /var/log/nginx
+fqdn: hopetoknow.com

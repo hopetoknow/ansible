@@ -1,0 +1,1 @@
+This role named nginx is used for installing nginx and configuring firewall
