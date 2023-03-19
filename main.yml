@@ -1,3 +1,2 @@
 - ansible.builtin.import_playbook: playbooks/user_setup.yml
 - ansible.builtin.import_playbook: playbooks/software_install.yml
-- ansible.builtin.import_playbook: playbooks/nginx_setup.yml
