@@ -1,0 +1,9 @@
+server {
+    listen {{ item }};    
+    server_name {{ fqdn }};
+    root /var/www/html;
+
+    location / {
+        index index{{ item }}.html;
+    }
+}
