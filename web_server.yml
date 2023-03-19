@@ -1,0 +1,5 @@
+- name: Install nginx and configure firewall
+  hosts: webservers
+  become: yes
+  roles:
+    - nginx
