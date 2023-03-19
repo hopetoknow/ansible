@@ -2,10 +2,12 @@
   hosts: webservers
   become: yes
   vars:
-    nginx_port: 8080
-    server_presentation: "This is server {{ ansible_hostname }}!"
     packages: [nginx=1.22.0-1ubuntu1.1, ufw=0.36.1-4build1, cowsay=3.03+dfsg2-8]
-    ports: [22, 443, 8080]
+    server_presentation: "This is server {{ ansible_hostname }}!"  
+    ufw_ports: [22, 80, 443, 8080]
+    nginx_ports: [80, 8080]
+    connection_number: 768
+    log_dir: /var/log/nginx
   tasks:
     - name: Install nginx, UFW and cowsay packages
       ansible.builtin.apt:
@@ -29,7 +31,7 @@
         rule: allow
         port: "{{ item }}"
         proto: tcp
-      loop: "{{ ports }}"
+      loop: "{{ ufw_ports }}"
 
     - name: Enable UFW
       community.general.ufw:
@@ -41,10 +43,26 @@
         dest: /etc/nginx/nginx.conf
       notify: Reload nginx
 
-    - name: Copy index.html
+    - name: Copy html files
       ansible.builtin.template:
         src: index.html.j2
-        dest: /usr/share/nginx/html/index.html
+        dest: /var/www/html/index{{ item }}.html
+      loop: "{{ nginx_ports }}"
+
+    - name: Copy virtual hosts configuration files
+      ansible.builtin.template:
+        src: host.conf.j2
+        dest: /etc/nginx/sites-available/host{{ item }}.conf
+      loop: "{{ nginx_ports }}"
+      notify: Reload nginx
+
+    - name: Activate virtual hosts configuration
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/host{{ item }}.conf"
+        dest: "/etc/nginx/sites-enabled/host{{ item }}.conf"
+        state: link
+      loop: "{{ nginx_ports }}" 
+      notify: Reload nginx
 
   handlers:
     - name: Reload nginx
