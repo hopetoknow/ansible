@@ -8,7 +8,6 @@
 </head>
 <body>
   <h1>Hello, and welcome to port {{ item }}</h1>
-  <h2>{{ server_presentation | upper }}</h2>
   <pre><code>{{ cowsay_output.stdout | join('') }}</code></pre>
   <small>Deployed at: {{ ansible_date_time.date }} {{ ansible_date_time.time }} UTC</small>
 </body>
