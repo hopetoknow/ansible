@@ -1,0 +1,19 @@
+- name: Install nginx, firewalld and cowsay packages
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ redhat_packages }}"
+
+- name: Allow traffic
+  ansible.posix.firewalld:
+    state: enabled
+    port: "{{ item }}/tcp"
+    permanent: true
+  loop: "{{ ufw_ports }}"
+
+- name: Make sure nginx & firewalld units are running
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+  loop: "{{ redhat_packages_to_check }}"

@@ -1,0 +1,23 @@
+- name: Install nginx, UFW and cowsay packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: "{{ debian_packages }}"
+
+- name: Make sure a service unit is running
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes  
+
+- name: Allow traffic
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: "{{ ufw_ports }}"
+
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled
