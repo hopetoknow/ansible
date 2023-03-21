@@ -18,8 +18,9 @@
     state: started
   loop: "{{ redhat_packages_to_check }}"
 
-- name: Create HTML directory if it does not exist
+- name: Create directories if they do not exist
   ansible.builtin.file:
-    path: /var/www/html
+    path: "{{ item }}"
     state: directory
     mode: '0755'
+  loop: "{{ redhat_directories_to_create }}"
