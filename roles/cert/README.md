@@ -1,0 +1,1 @@
+This role named cert is used for installing certbot and receiving certificate from Let's Encrypt

@@ -1,0 +1,12 @@
+server {
+    listen {{ https_port }} ssl http2;    
+    server_name {{ fqdn }};
+    root /var/www/html;
+
+    ssl_certificate /etc/letsencrypt/live/{{ fqdn }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ fqdn }}/privkey.pem;
+
+    location / {
+        index index{{ https_port }}.html;
+    }
+}

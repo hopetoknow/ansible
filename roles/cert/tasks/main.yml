@@ -1,0 +1,33 @@
+- name: Install certbot
+  ansible.builtin.apt:
+    name: certbot={{ certbot_version }}
+    state: present
+
+- name: Recieve certificate from Let's Encrypt
+  ansible.builtin.command: "certbot certonly --agree-tos --no-eff-email --webroot --webroot-path=/var/www/html --email {{ email }} -d {{ fqdn }}"
+
+- name: Copy script for successful certificate renewall
+  ansible.builtin.copy:
+    src: reload-nginx.sh
+    dest: /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+    mode: "0755"
+
+- name: Copy html files
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index{{ https_port }}.html
+    mode: "0644"
+
+- name: Copy virtual host configuration file
+  ansible.builtin.template:
+    src: host.conf.j2
+    dest: /etc/nginx/sites-available/host{{ https_port }}.conf
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Activate virtual host configuration
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/host{{ https_port }}.conf"
+    dest: "/etc/nginx/sites-enabled/host{{ https_port }}.conf"
+    state: link
+  notify: Reload nginx
