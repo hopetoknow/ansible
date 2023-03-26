@@ -1,17 +1,16 @@
 - name: Install soft
   hosts: webservers
-  become: yes
+  become: true
   pre_tasks:
     - name: Update apt cache
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
   roles:
     - role: geerlingguy.git
     - role: geerlingguy.java
     - role: gantsign.maven
-  tasks:      
+  tasks:
     - name: Install Make
       ansible.builtin.apt:
         name: make
-        state: latest
-        
+        state: present

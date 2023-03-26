@@ -2,7 +2,7 @@
   ansible.builtin.yum:
     name: "{{ item }}"
     state: present
-    update_cache: yes
+    update_cache: true
   loop: "{{ redhat_packages }}"
 
 - name: Allow traffic

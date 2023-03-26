@@ -1,9 +1,9 @@
 - name: Create and configure users
   hosts: webservers
-  become: yes
+  become: true
   vars:
     users: [bob, joe, sam, hopetoknow]
-  tasks:  
+  tasks:
     - name: Create user
       ansible.builtin.user:
         name: "{{ item }}"
@@ -26,7 +26,7 @@
         state: present
         key: "{{ lookup('file', '/home/hopetoknow/.ssh/id_rsa.pub') }}"
       loop: "{{ users }}"
-    
+
     - name: Allow root and user to SSH into server
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
@@ -36,10 +36,10 @@
       ansible.builtin.service:
         name: ssh
         state: restarted
-    
+
     - name: Copy git configuration file
       ansible.builtin.template:
         src: .gitconfig.j2
         dest: "/home/{{ item }}/.gitconfig"
+        mode: "0644"
       loop: "{{ users }}"
-        

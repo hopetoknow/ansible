@@ -2,14 +2,14 @@
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present
-    update_cache: yes
+    update_cache: true
   loop: "{{ debian_packages }}"
 
 - name: Make sure a service unit is running
   ansible.builtin.systemd:
     name: nginx
     state: started
-    enabled: yes  
+    enabled: true
 
 - name: Allow traffic
   community.general.ufw:

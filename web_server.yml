@@ -1,6 +1,6 @@
 - name: Install nginx and configure firewall
   hosts: webservers
-  become: yes
+  become: true
   roles:
     - nginx
     - cert

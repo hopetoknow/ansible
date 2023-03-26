@@ -1,6 +1,8 @@
-- ansible.builtin.import_tasks: debian.yml
+- name: Install soft and allow traffic
+  ansible.builtin.import_tasks: debian.yml
   when: ansible_os_family == "Debian"
-- ansible.builtin.import_tasks: redhat.yml
+- name: Install soft and allow traffic
+  ansible.builtin.import_tasks: redhat.yml
   when: ansible_os_family == "RedHat"
 
 - name: Make the cow say hostname
@@ -11,18 +13,21 @@
   ansible.builtin.template:
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
+    mode: "0644"
   notify: Reload nginx
 
 - name: Copy html files
   ansible.builtin.template:
     src: index.html.j2
     dest: /var/www/html/index{{ item }}.html
+    mode: "0644"
   loop: "{{ nginx_ports }}"
 
 - name: Copy virtual hosts configuration files
   ansible.builtin.template:
     src: host.conf.j2
     dest: /etc/nginx/sites-available/host{{ item }}.conf
+    mode: "0644"
   loop: "{{ nginx_ports }}"
   notify: Reload nginx
 
@@ -31,5 +36,5 @@
     src: "/etc/nginx/sites-available/host{{ item }}.conf"
     dest: "/etc/nginx/sites-enabled/host{{ item }}.conf"
     state: link
-  loop: "{{ nginx_ports }}" 
+  loop: "{{ nginx_ports }}"
   notify: Reload nginx
