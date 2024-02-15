@@ -1,0 +1,30 @@
+- name: Copy ssh key and ssl cert to remote server
+  hosts: all
+  become: true
+  vars_files: vars/ssh_ssl_copy_vars.yml
+  tasks:
+    - name: Create user
+      ansible.builtin.user:
+        name: "{{ user }}"
+        groups: sudo
+        state: present
+
+    - name: Create .ssh directory
+      ansible.builtin.file:
+        path: "/home/{{ user }}/.ssh"
+        state: directory
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0700'
+
+    - name: Copy private SSH key to remote server
+      ansible.builtin.copy:
+        src: key
+        dest: "/home/{{ user }}/.ssh/key"
+        mode: "0600"
+
+    - name: Copy ssl certificate to remote server
+      ansible.builtin.copy:
+        src: fullchain.pem
+        dest: "/etc/letsencrypt/live/{{ fqdn }}/fullchain.pem"
+        mode: "0600"
