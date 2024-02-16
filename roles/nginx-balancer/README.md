@@ -1,0 +1,1 @@
+This role named nginx-balancer is used for configuring nginx as a load balancer

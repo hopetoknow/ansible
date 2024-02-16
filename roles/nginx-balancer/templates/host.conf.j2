@@ -1,0 +1,15 @@
+upstream app {
+{% for ip in groups['app'] %}
+    server {{ ip }};
+{% endfor %}  
+}
+
+server {
+    listen {{ nginx_port }};    
+    server_name {{ hostvars[groups['all'][0]].site_name }};
+
+    location / {
+        proxy_pass http://app;
+        proxy_ssl_server_name on;
+    }
+}
