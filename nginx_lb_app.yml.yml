@@ -1,0 +1,17 @@
+- name: Install nginx and allow traffic
+  hosts: app:lb
+  become: true
+  roles:
+    - role: nginx-core
+
+- name: Configure nginx for app
+  hosts: app
+  become: true
+  roles:
+    - role: nginx-app
+
+- name: Configure nginx for lb
+  hosts: lb
+  become: true
+  roles:
+    - role: nginx-balancer
